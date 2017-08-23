@@ -2,10 +2,6 @@ FROM r-base:3.1.3
 
 RUN mkdir /build
 
-COPY Dockerfile /build/Dockerfile
-COPY jobdef.json /build/jobdef.json
-COPY RunR.java /build/RunR.java 
-COPY installPackages.R /build/source/installPackages.R
 COPY Cairo_1.5-9.tar.gz /build/Cairo_1.5-9.tar.gz
 
 RUN apt-get update && apt-get upgrade --yes && \
@@ -41,15 +37,22 @@ RUN  mkdir packages && \
     apt-get install libcurl4-gnutls-dev --yes && \
     R CMD INSTALL /build/Cairo_1.5-9.tar.gz
 
+COPY common/container_scripts/misc/RunR.java /build/RunR.java
+
 RUN  cd /build && \
     javac RunR.java
 
-COPY runLocalInstallPackages.sh /usr/local/bin/runLocal.sh
-COPY runS3OnBatchInstallPackages.sh /usr/local/bin/runS3OnBatch.sh
+COPY common/container_scripts/runLocal.sh /usr/local/bin/runLocal.sh
+COPY Dockerfile /build/Dockerfile
+COPY jobdef.json /build/jobdef.json
+COPY RunR.java /build/RunR.java
+COPY common/container_scripts/installPackages.R-2 /build/source/installPackages.R
+COPY common/container_scripts/runS3OnBatch.sh /usr/local/bin/runS3OnBatch.sh
+COPY runS3Batch_prerun_custom.sh /usr/local/bin/runS3Batch_prerun_custom.sh
+COPY runS3Batch_postrun_custom.sh /usr/local/bin/runS3Batch_postrun_custom.sh
 
-RUN  cd /build && \
-    javac RunR.java && \
-    chmod ugo+x /usr/local/bin/runS3OnBatch.sh 
+
+RUN chmod a+x /usr/local/bin/runS3OnBatch.sh /usr/local/bin/runLocal.sh
     
  
 CMD ["/usr/local/bin/runS3OnBatch.sh" ]
