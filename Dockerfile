@@ -45,7 +45,6 @@ RUN  cd /build && \
 COPY common/container_scripts/runLocal.sh /usr/local/bin/runLocal.sh
 COPY Dockerfile /build/Dockerfile
 COPY jobdef.json /build/jobdef.json
-COPY RunR.java /build/RunR.java
 COPY common/container_scripts/installPackages.R-2 /build/source/installPackages.R
 COPY common/container_scripts/runS3OnBatch.sh /usr/local/bin/runS3OnBatch.sh
 COPY runS3Batch_prerun_custom.sh /usr/local/bin/runS3Batch_prerun_custom.sh
