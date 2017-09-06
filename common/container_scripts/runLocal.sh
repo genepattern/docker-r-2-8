@@ -10,9 +10,10 @@ EXECUTABLE=$5
 #
 # assign filenames for STDOUT and STDERR if not already set
 #
-: ${STDOUT_FILENAME=.gp_metadata/stdout.txt}
-: ${STDERR_FILENAME=.gp_metadata/stderr.txt}
-: ${EXITCODE_FILENAME=.gp_metadata/exit_code.txt}
+: ${GP_METADATA_DIR=$WORKING_DIR/.gp_metadata}
+: ${STDOUT_FILENAME=stdout.txt}
+: ${STDERR_FILENAME=stderr.txt}
+: ${EXITCODE_FILENAME=$GP_METADATA_DIR/exit_code.txt}
 
 # echo out params
 echo working dir is  -$WORKING_DIR- 
@@ -20,21 +21,21 @@ echo Task dir is -$TASKLIB-
 echo executable is -$5-
 echo S3_ROOT is -$S3_ROOT-
 echo input files location  is -$INPUT_FILES_DIR-
-
+echo STDOUT is $STDOUT_FILENAME
 
 ##################################################
 # MODIFICATION FOR R PACKAGE INSTALLATION
 ##################################################
-if [ -f "$TASKLIB/r.package.info" ]
+if [[ -f "$TASKLIB/r.package.info"  && -f "/build/source/installPackages.R" ]]
 then
-	echo "$TASKLIB/r.package.info found."
+        echo "Installing R packages from $TASKLIB/r.package.info."
         Rscript /build/source/installPackages.R $TASKLIB/r.package.info
 else
-	echo "$TASKLIB/r.package.info not found."
+        echo "No R packages installed. $TASKLIB/r.package.info not found."
 fi
 
+
 cd $WORKING_DIR
-#mkdir -p .gp_metadata
 
 # run the module
 shift
@@ -43,13 +44,9 @@ shift
 shift
 
 echo "========== DEBUG inside container ================="
-echo $@
+echo $@  >$STDOUT_FILENAME 2>$STDERR_FILENAME
+echo "{ \"exit_code\": $? }">$EXITCODE_FILENAME
 echo "====== END DEBUG ================="
-
-#for x in "${@}" ; do
-#    # try to figure out if quoting was required for the $x
-#    echo "==$x=="
-#done
 
 "$@"  >$STDOUT_FILENAME 2>$STDERR_FILENAME
 

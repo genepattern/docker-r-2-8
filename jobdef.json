@@ -9,26 +9,11 @@
             "Ref::exe1"
         ],
         "jobRoleArn": "arn:aws:iam::718039241689:role/BATCH-EFS-ROLE",
-        "environment": [
-            {
-                "name": "STDOUT_FILENAME",
-                "value": "./.gp_metadata/stdout.txt"
-            },
-            {
-                "name": "STDOUT_FILENAME",
-                "value": "./.gp_metadata/stdout.txt"
-            },
-            {
-                "name": "EXITCODE_FILENAME",
-                "value": "./.gp_metadata/exit_code.txt"
-
-            }
-        ],
-        "image": "liefeld/r28",
+        "image": "genepattern/docker-r-2-8",
         "memory": 2000,
         "mountPoints": [],
         "ulimits": [],
-        "vcpus": 2,
+        "vcpus": 1,
         "volumes": []
     },
     "jobDefinitionName": "R28_Generic",
